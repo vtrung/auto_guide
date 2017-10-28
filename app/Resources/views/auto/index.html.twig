@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h1>Hello Twig and {{ title }} </h1>
+
+    <div class="container">Dumping: {{ dump() }}</div>
+
+    <div class="container">
+        <div class="row">
+            <ul>
+                {% for car in cars %}
+                    <li>{{ car.year}} {{ car.make }} {{car.model}}: {{ car.mpg }}mpg</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="row">
+            <select id="carselect1">
+                {% for car in cars %}
+                    <option value="{{ car.model }}">{{ car.year}} {{ car.make }} {{car.model}}</option>
+                {% endfor %}
+            </select>
+
+            <select id="carselect2">
+                {% for car in cars %}
+                    <option value="{{ car.model }}">{{ car.year}} {{ car.make }} {{car.model}}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="row">
+            <button type="submit" onClick="console.log('submit')">Compare</button>
+        </div>
+    </div>
+
+
+
+
+
+{% endblock %}
