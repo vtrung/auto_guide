@@ -1,36 +1,65 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}
+    {{ title }}
+{% endblock %}
 {% block body %}
+    <div class="container">
+        <h1>{{ title }} </h1>
+    </div>
 
-    <h1>Hello Twig and {{ title }} </h1>
 
-    <div class="container">Dumping: {{ dump() }}</div>
+    {#<div class="container">Dumping: {{ dump() }}</div>#}
 
     <div class="container">
         <div class="row">
             <ul>
                 {% for car in cars %}
-                    <li>{{ car.year}} {{ car.make }} {{car.model}}: {{ car.mpg }}mpg</li>
+                    <li>{{ car.year}} {{ car.make }} {{car.model}}: {{ car.mpg }} mpg</li>
                 {% endfor %}
             </ul>
         </div>
         <div class="row">
-            <select id="carselect1">
-                {% for car in cars %}
-                    <option value="{{ car.model }}">{{ car.year}} {{ car.make }} {{car.model}}</option>
-                {% endfor %}
-            </select>
+            {{ form_start(form, {'attr':{'id':'carform'}}) }}
 
-            <select id="carselect2">
-                {% for car in cars %}
-                    <option value="{{ car.model }}">{{ car.year}} {{ car.make }} {{car.model}}</option>
-                {% endfor %}
-            </select>
+                {{ form_errors(form) }}
+                <div class="form-group">
+                    {{ form_label(form.carLeft, 'Car 1') }}
+                    {{ form_errors(form.carLeft) }}
+                    {{ form_widget(form.carLeft) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(form.carRight, 'Car 2') }}
+                    {{ form_errors(form.carRight) }}
+                    {{ form_widget(form.carRight) }}
+                </div>
+                <div class="form-group">
+                    {{ form_row(form.save) }}
+                </div>
+
+            {{ form_end(form) }}
+
         </div>
-
+        {% if compare|length > 0 %}
         <div class="row">
-            <button type="submit" onClick="console.log('submit')">Compare</button>
+            <div>
+                Comparing:
+                <ul>
+                    {% for car in compare %}
+                        <li>{{ car.year}} {{ car.make }} {{car.model}}: {{ car.mpg }} mpg</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
         </div>
+        <div class="row">
+            <div>
+               <strong>Mileage Difference: {{ comparempg }} mpg</strong>
+            </div>
+        </div>
+        {% endif %}
+
     </div>
 
 
