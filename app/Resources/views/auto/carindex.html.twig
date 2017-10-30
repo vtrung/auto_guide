@@ -12,24 +12,22 @@
     </div>
 
 
-    {#<div class="container">Dumping: {{ dump() }}</div>#}
+    <div class="container">Dumping: {{ dump() }}</div>
 
     <div class="container">
         <div class="row">
-           <h1>{{ title }}</h1>
+            <h1>{{ title }}</h1>
         </div>
         {#<div class="row">#}
-            {#<ul>#}
-                {#{% for car in cars %}#}
-                    {#<li>{{ car.year}} {{ car.make }} {{car.model}}: {{ car.mpg }} mpg</li>#}
-                {#{% endfor %}#}
-            {#</ul>#}
+        {#<ul>#}
+        {#{% for car in cars %}#}
+        {#<li>{{ car.year}} {{ car.make }} {{car.model}}: {{ car.mpg }} mpg</li>#}
+        {#{% endfor %}#}
+        {#</ul>#}
         {#</div>#}
-        <div class="row">
-            {{ form(form) }}
-
-        </div>
-
+        <ul>
+            <li>{{ car.year}} {{ car.make }} {{car.model}}: {{ car.mpg }} mpg</li>
+        </ul>
     </div>
 
 
