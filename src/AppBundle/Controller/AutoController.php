@@ -14,17 +14,73 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Utility\CarUtility;
 
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use AppBundle\Form\EventListener\CarFormEventListener;
+
 
 class AutoController Extends Controller
 {
+    /**
+     * @Route("/form", name="auto_form")
+     */
+    public function formAction(Request $request){
+
+        $em = $this->getDoctrine()->getManager();
+        $cu = new CarUtility($em);
+
+        $emptyarray = array(
+            'empty_data' => '',
+            'required'   => false,
+        );
+
+        $years = $cu->GetAllYears();
+
+        $form = $this->createFormBuilder()
+            ->add('year', ChoiceType::class, array(
+                'choices' => $years,
+                'choice_label' => function($value, $key, $index){
+                    return $value;
+                }
+            ))
+            ->add('make', ChoiceType::class, $emptyarray)
+            ->add('model', ChoiceType::class, $emptyarray)
+            ->add('save', SubmitType::class, array('label' => 'Next'))
+            //->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) { dump($event); exit; })
+            ->addEventSubscriber(new CarFormEventListener($em))
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $year = $form->getData()['year'];
+            $make = $form->getData()['make'];
+            $model = $form->getData()['model'];
+
+            if($form->has('model')) {
+                print("model");
+                var_dump($model);
+            }
+
+        };
+
+
+        return $this->render('auto/index.html.twig', [
+            'title' => "AG Car Finder",
+            'form' => $form->createView()
+        ]);
+    }
+
+
     /**
      * @Route("/", name="auto_landing")
      */
     public function indexAction(Request $request){
 
-        $cu = new CarUtility();
         $em = $this->getDoctrine()->getManager();
-        $years = $cu->GetAllYears($em);
+        $cu = new CarUtility($em);
+        //$em = $this->getDoctrine()->getManager();
+        $years = $cu->GetAllYears();
         var_dump($years);
         $form = $this->createFormBuilder()
             ->add('year', ChoiceType::class, array(
@@ -33,7 +89,9 @@ class AutoController Extends Controller
                     return $year;
                 }
             ))
+
             ->add('save', SubmitType::class, array('label' => 'Next'))
+            ->addEventSubscriber(new CarFormEventListener($em))
             ->getForm();
 
         $form->handleRequest($request);
@@ -57,9 +115,10 @@ class AutoController Extends Controller
      * @Route("/car/{year}", name="auto_year_landing")
      */
     public function carYearAction(Request $request, $year){
-        $cu = new CarUtility();
         $em = $this->getDoctrine()->getManager();
-        $makes = $cu->GetMake($em, $year);
+        $cu = new CarUtility($em);
+        $em = $this->getDoctrine()->getManager();
+        $makes = $cu->GetMake($year);
 
         $form = $this->createFormBuilder()
 
@@ -95,9 +154,10 @@ class AutoController Extends Controller
      * @Route("/car/{year}/{make}", name="auto_make_landing")
      */
     public function carMakeAction(Request $request, $year, $make){
-        $cu = new CarUtility();
         $em = $this->getDoctrine()->getManager();
-        $models = $cu->GetModel($em, $year, $make);
+        $cu = new CarUtility($em);
+        $em = $this->getDoctrine()->getManager();
+        $models = $cu->GetModel($year, $make);
 
         $form = $this->createFormBuilder()
 
