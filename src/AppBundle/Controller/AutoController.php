@@ -17,36 +17,46 @@ use AppBundle\Utility\CarUtility;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use AppBundle\Form\EventListener\CarFormEventListener;
+use AppBundle\Repository\CarRepository;
 
 
 class AutoController Extends Controller
 {
     /**
-     * @Route("/form", name="auto_form")
+     * @Route("/", name="auto_form")
      */
     public function formAction(Request $request){
 
+        $car = null;
+
         $em = $this->getDoctrine()->getManager();
-        $cu = new CarUtility($em);
 
         $emptyarray = array(
             'empty_data' => '',
             'required'   => false,
         );
 
-        $years = $cu->GetAllYears();
+        $years = $this->getDoctrine()
+            ->getRepository(Car::class)
+            ->findYears();
+        // add empty value
+        array_unshift ( $years, null );
 
         $form = $this->createFormBuilder()
             ->add('year', ChoiceType::class, array(
                 'choices' => $years,
-                'choice_label' => function($value, $key, $index){
-                    return $value;
+                'choice_label' => function( Car $year = null){
+                    /** @var Car $value */
+                    return $year ? $year->getYear(): '';
+                },
+                'choice_value' => function(Car $year = null){
+                    /** @var Car $value */
+                    return $year ? $year->getYear(): '';
                 }
             ))
             ->add('make', ChoiceType::class, $emptyarray)
             ->add('model', ChoiceType::class, $emptyarray)
-            ->add('save', SubmitType::class, array('label' => 'Next'))
-            //->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) { dump($event); exit; })
+
             ->addEventSubscriber(new CarFormEventListener($em))
             ->getForm();
 
@@ -58,8 +68,9 @@ class AutoController Extends Controller
             $model = $form->getData()['model'];
 
             if($form->has('model')) {
-                print("model");
-                var_dump($model);
+               // print("model");
+               // var_dump($model);
+                $car = $model;
             }
 
         };
@@ -67,13 +78,14 @@ class AutoController Extends Controller
 
         return $this->render('auto/index.html.twig', [
             'title' => "AG Car Finder",
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'car' => $car
         ]);
     }
 
 
     /**
-     * @Route("/", name="auto_landing")
+     * @Route("/car", name="auto_landing")
      */
     public function indexAction(Request $request){
 

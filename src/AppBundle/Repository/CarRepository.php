@@ -10,4 +10,35 @@ namespace AppBundle\Repository;
  */
 class CarRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function findYears(){
+        $query = $this->_em->createQuery(
+            'SELECT c FROM AppBundle:Car c GROUP BY c.year ORDER BY c.year'
+        );
+        return $query->getResult();
+    }
+
+    public function findMakes($year){
+        $query = $this->_em->createQuery(
+            'SELECT DISTINCT c
+              FROM AppBundle:Car c 
+              WHERE c.year=:year
+              GROUP BY c.make
+              ORDER BY c.make'
+        )->setParameter('year', $year);
+
+        return $query->getResult();
+    }
+
+    public function findModels($year, $make){
+        $query = $this->_em->createQuery(
+            'SELECT DISTINCT c 
+              FROM AppBundle:Car c 
+              WHERE  c.year=:year AND c.make=:make
+              ORDER BY c.model'
+        )
+            ->setParameter('year',$year)
+            ->setParameter('make',$make);
+
+        return $query->getResult();
+    }
 }
