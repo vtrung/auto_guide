@@ -22,6 +22,13 @@ class Car
     private $id;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="carid", type="integer", unique=true)
+     */
+    private $carid;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="year", type="string", length=255)
@@ -43,9 +50,9 @@ class Car
     private $model;
 
     /**
-     * @var int
+     * @var string
      *
-     * @ORM\Column(name="mpg", type="integer")
+     * @ORM\Column(name="mpg", type="string", length=255)
      */
     private $mpg;
 
@@ -58,6 +65,30 @@ class Car
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set carid
+     *
+     * @param integer $carid
+     *
+     * @return Car
+     */
+    public function setCarid($carid)
+    {
+        $this->carid = $carid;
+
+        return $this;
+    }
+
+    /**
+     * Get carid
+     *
+     * @return int
+     */
+    public function getCarid()
+    {
+        return $this->carid;
     }
 
     /**
@@ -135,7 +166,7 @@ class Car
     /**
      * Set mpg
      *
-     * @param integer $mpg
+     * @param string $mpg
      *
      * @return Car
      */
@@ -149,12 +180,13 @@ class Car
     /**
      * Get mpg
      *
-     * @return int
+     * @return string
      */
     public function getMpg()
     {
         return $this->mpg;
     }
+
 
     public function getName()
     {

@@ -41,4 +41,8 @@ class CarRepository extends \Doctrine\ORM\EntityRepository
 
         return $query->getResult();
     }
+
+    public function checkId($id){
+
+    }
 }
